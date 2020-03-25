@@ -59,17 +59,35 @@ discord.post('/anorak-board-update', validator.body(postBoardUpdateBody), async 
   const channel = process.env.ANORAK_DISCORD_CHANNEL;
 
   const boardUrl = `https://app.gitkraken.com/glo/board/${board.id}`;
-  let message = `\n\n${board.name} has updates\n${boardUrl}\n`;
+  let message = `\n${board.name} has updates\n${boardUrl}\n`;
 
   if (action === 'moved_column') {
-    message += `[${card.name}] moved to ${getAnorakBoardColumn(card.column_id)} by ${sender.name}\n\n`;
+    message += `[${card.name}] moved to ${getAnorakBoardColumn(card.column_id)} by ${sender.name}\n`;
   }
-
-  console.log(req.body);
 
   await sendMessage(token, channel, message);
 
   return status.created(res, { boardUpdate: req.body, message });
+});
+
+const postGithubUpdateBody = Joi.object({
+  repository: Joi.object().required(),
+  sender: Joi.object().required()
+});
+
+discord.post('/github', async (req, res) => {
+  const { body: { repository, sender } } = req;
+  const token = process.env.ANORAK_DISCORD_BOT_TOKEN;
+  const channel = process.env.ANORAK_DISCORD_CHANNEL;
+
+  const message = `${repository.name} updated by ${sender.login}`;
+
+  console.log(message);
+  console.log(req.body);
+
+  await sendMessage(token, channel, message);
+
+  return status.created(res, { gitHubUpdate: req.body });
 });
 
 module.exports = discord;
