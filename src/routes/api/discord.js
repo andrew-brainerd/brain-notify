@@ -29,4 +29,16 @@ discord.post('/peapod-release', validator.body(postReleaseBody), async (req, res
   return status.created(res, { message });
 });
 
+discord.post('/anorak-release', validator.body(postReleaseBody), async (req, res) => {
+  const { body: { data } } = req;
+  const token = process.env.ANORAK_DISCORD_BOT_TOKEN;
+  const channel = process.env.ANORAK_DISCORD_CHANNEL;
+  const message = `Released ${data.app.name} version ${data.release.version} [${data.user.email}]`;
+
+  await sendMessage(token, channel, message);
+
+  return status.created(res, { message });
+});
+
+
 module.exports = discord;
