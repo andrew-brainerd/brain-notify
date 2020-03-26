@@ -70,20 +70,18 @@ discord.post('/anorak-board-update', validator.body(postBoardUpdateBody), async 
   return status.created(res, { boardUpdate: req.body, message });
 });
 
-const postGithubUpdateBody = Joi.object({
-  repository: Joi.object().required(),
-  sender: Joi.object().required()
-});
-
 discord.post('/github', async (req, res) => {
-  const { body: { repository, sender } } = req;
+  const { body: { action, pull_request, repository, sender } } = req;
   const token = process.env.ANORAK_DISCORD_BOT_TOKEN;
   const channel = process.env.ANORAK_DISCORD_CHANNEL;
+  let message = '';
 
-  const message = `${repository.name} updated by ${sender.login}`;
-
-  console.log(message);
-  console.log(req.body);
+  if (pull_request) {
+    const { number, html_url, title } = pull_request;
+    message = `PR #${number} [${title}] ${action} ${repository.name} by ${sender.login}\n${html_url}`;
+  } else {
+    message = `${repository.name} | ${action} | ${sender.login}`;
+  }
 
   await sendMessage(token, channel, message);
 
