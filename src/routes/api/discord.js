@@ -83,7 +83,9 @@ discord.post('/github', async (req, res) => {
     message = `${repository.name} | ${action} | ${sender.login}`;
   }
 
-  await sendMessage(token, channel, message);
+  if (action !== 'review_requested') {
+    await sendMessage(token, channel, message);
+  }
 
   return status.created(res, { gitHubUpdate: req.body });
 });
