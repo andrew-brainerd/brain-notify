@@ -78,7 +78,7 @@ discord.post('/github', async (req, res) => {
 
   if (pull_request) {
     const { number, html_url, title } = pull_request;
-    message = `PR #${number} [${title}] ${action} ${repository.name} by ${sender.login}\n${html_url}`;
+    message = `PR #${number} [${title}] ${action} by ${sender.login} in ${repository.name}\n${html_url}`;
   } else {
     message = `${repository.name} | ${action} | ${sender.login}`;
   }
