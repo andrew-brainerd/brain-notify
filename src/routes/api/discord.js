@@ -41,6 +41,17 @@ discord.post('/anorak-release', validator.body(postReleaseBody), async (req, res
   return status.created(res, { message });
 });
 
+discord.post('/project-release', async (req, res) => {
+  const { body: { data } } = req;
+  const token = process.env.PROJECTS_DISCORD_BOT_TOKEN;
+  const channel = process.env.PROJECTS_DISCORD_CHANNEL;
+  const message = `Released ${data.app.name} version ${data.version} [${data.user.email}]`;
+
+  await sendMessage(token, channel, message);
+
+  return status.created(res, { message });
+});
+
 const postBoardUpdateBody = Joi.object({
   action: Joi.string().required(),
   board: Joi.object({
